@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智源成长AI-返家乡志愿辅导工具包</title>
+    <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary-color: #06d6a0;
+            --accent-color: #118ab2;
+            --warning-color: #ffd166;
+            --danger-color: #ef476f;
+            --light-color: #f8f9fa;
+            --dark-color: #2b2d42;
+            --text-color: #495057;
+            --text-light: #6c757d;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --box-shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            --gradient-success: linear-gradient(135deg, #06d6a0 0%, #04a777 100%);
+            --gradient-warning: linear-gradient(135deg, #ffd166 0%, #ff9e00 100%);
+            --gradient-danger: linear-gradient(135deg, #ef476f 0%, #d90429 100%);
+            --section-spacing: 3rem;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 玻璃态效果 */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 导航栏优化 */
+        header {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+        
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: var(--transition);
+        }
+        
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active-nav {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* 页面切换 */
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 英雄区域 */
+        .hero {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: var(--section-spacing);
+            border-radius: var(--border-radius);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.05)"/></svg>');
+            background-size: cover;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2.5rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* 功能卡片 */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: var(--section-spacing);
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+        
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* 内容卡片 */
+        .content {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+            border-top: 4px solid var(--primary-color);
+        }
+        
+        .content:hover {
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .content-title {
+            font-size: 1.6rem;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        /* AI助手界面优化 */
+        .ai-assistant-container {
+            background: var(--gradient-primary);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            color: white;
+            margin-bottom: var(--section-spacing);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ai-assistant-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(180deg); }
+        }
+
+        .ai-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .ai-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .ai-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* AI聊天页面样式 */
+        .ai-chat-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .ai-chat-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .ai-chat-header h2 {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+        }
+        
+        .ai-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .ai-message {
+            padding: 1rem 1.2rem;
+            border-radius: 18px;
+            max-width: 85%;
+            line-height: 1.5;
+        }
+        
+        .ai-user-message {
+            background: var(--primary-color);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .ai-bot-message {
+            background: white;
+            color: var(--text-color);
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .ai-typing-indicator {
+            display: none;
+            padding: 1rem 1.2rem;
+            background: white;
+            border-radius: 18px;
+            border-bottom-left-radius: 5px;
+            max-width: 80px;
+            margin-bottom: 1rem;
+        }
+        
+        .ai-typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .ai-typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .ai-typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .ai-typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+        
+        .ai-chat-input {
+            display: flex;
+            gap: 0.8rem;
+        }
+        
+        .ai-chat-input input {
+            flex: 1;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        
+        .ai-chat-input input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* AI工具页面样式 */
+        .ai-tools-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: var(--section-spacing);
+        }
+        
+        .ai-tool-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            border-top: 4px solid var(--primary-color);
+        }
+        
+        .ai-tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        .ai-tool-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .ai-tool-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+        
+        .ai-tool-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 选项卡优化 */
+        .api-tabs {
+            display: flex;
+            background: #f8f9fc;
+            border-radius: 12px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            gap: 0.5rem;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            border-radius: 8px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .tab.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* 表单样式优化 */
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e3e6f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: #f8f9fc;
+            font-family: inherit;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        /* 按钮优化 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            gap: 0.5rem;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: var(--transition);
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--gradient-success);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: var(--gradient-warning);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--gradient-danger);
+            color: white;
+        }
+
+        /* 响应结果样式优化 */
+        .response-container {
+            margin-top: 2.5rem;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            background: white;
+            display: none;
+        }
+        
+        .response-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .response-content {
+            background: #f8f9fc;
+            padding: 2rem;
+            min-height: 200px;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.8;
+            font-size: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* 加载动画优化 */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: var(--border-radius);
+            margin: 2rem 0;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .spinner {
+            border: 4px solid rgba(67, 97, 238, 0.2);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 错误提示优化 */
+        .error {
+            background: var(--gradient-danger);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin: 2rem 0;
+            display: none;
+            box-shadow: var(--box-shadow);
+        }
+
+        /* 状态指示器 */
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .status-online {
+            background: rgba(6, 214, 160, 0.1);
+            color: #06d6a0;
+            border: 1px solid rgba(6, 214, 160, 0.2);
+        }
+        
+        .status-offline {
+            background: rgba(239, 71, 111, 0.1);
+            color: #ef476f;
+            border: 1px solid rgba(239, 71, 111, 0.2);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .status-dot.online {
+            background: #06d6a0;
+            box-shadow: 0 0 10px rgba(6, 214, 160, 0.5);
+        }
+        
+        .status-dot.offline {
+            background: #ef476f;
+        }
+
+        /* 页脚优化 */
+        footer {
+            background: white;
+            border-top: 1px solid #e3e6f0;
+            padding: 2.5rem 0;
+            margin-top: 3rem;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 100%;
+                padding: 0 15px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-tools-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .api-tabs {
+                flex-direction: column;
+            }
+            
+            .content {
+                padding: 1.5rem;
+            }
+            
+            .ai-assistant-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div class="loader" id="pageLoader" style="
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: var(--gradient-primary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+    ">
+        <div style="text-align: center; color: white;">
+            <div style="
+                width: 60px;
+                height: 60px;
+                border: 4px solid rgba(255,255,255,0.3);
+                border-top: 4px solid white;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 20px;
+            "></div>
+            <h2>智源成长AI</h2>
+            <p>加载中...</p>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>智源成长AI</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#" id="navHome" class="active-nav"><i class="fas fa-home"></i> 首页</a></li>
+                    <li><a href="#" id="navAIChat"><i class="fas fa-comments"></i> AI对话</a></li>
+                    <li><a href="#" id="navAITools"><i class="fas fa-tools"></i> AI工具</a></li>
+                    <li>
+                        <div class="status-indicator" id="apiStatus">
+                            <span class="status-dot"></span>
+                            <span>检测服务状态...</span>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 首页内容 -->
+    <div class="container page active" id="homePage">
+        <div class="hero">
+            <div class="hero-content">
+                <h1>智源成长AI-返家乡志愿辅导工具包</h1>
+                <p>为返乡大学生志愿者提供全面的学生辅导管理工具，结合AI智能分析，帮助识别和解决学生在学习、生活和情绪上的问题</p>
+                <button class="btn btn-primary" id="heroAIBtn">
+                    <i class="fas fa-robot"></i> 立即体验AI对话
+                </button>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>AI智能分析</h3>
+                <p>基于大语言模型的智能分析系统，为学生问题提供专业解决方案和学习建议</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3>学科问题分析</h3>
+                <p>针对具体学科问题，提供专业学习建议和知识点解析，帮助学生克服学习障碍</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3>学习计划生成</h3>
+                <p>根据学生情况，制定个性化学习计划，合理分配学习时间和任务</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="content-header">
+                <h2 class="content-title">系统功能简介</h2>
+            </div>
+            <p style="margin-bottom: 1.5rem; font-size: 1.1rem;">智源成长AI-返家乡志愿辅导工具包是专为返乡大学生志愿者设计的智能辅导管理系统，结合前沿AI技术，帮助志愿者更有效地开展学生辅导工作。</p>
+            
+            <div style="text-align: center; margin-top: 2.5rem;">
+                <button class="btn btn-primary" id="contentAIBtn">
+                    <i class="fas fa-robot"></i> 开始使用AI对话
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI对话页面 -->
+    <div class="container page" id="aiChatPage">
+        <div class="ai-assistant-container">
+            <div class="ai-header">
+                <h1><i class="fas fa-comments"></i> AI智能对话</h1>
+                <p>基于大语言模型的智能对话系统，为学生问题提供即时解答和专业建议</p>
+            </div>
+            
+            <div class="ai-chat-container">
+                <div class="ai-chat-header">
+                    <h2>智能对话</h2>
+                </div>
+                <div class="ai-chat-messages" id="aiChatMessages">
+                    <div class="ai-message ai-bot-message">
+                        您好！我是AI智能助手，很高兴为您服务。我可以帮助您分析学生问题、制定学习计划、解答学科疑问等。请问有什么可以帮您的吗？
+                    </div>
+                </div>
+                <div class="ai-typing-indicator" id="aiTypingIndicator">
+                    <div class="ai-typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="ai-chat-input">
+                    <input type="text" id="aiUserInput" placeholder="输入您的问题或需要分析的内容..." maxlength="500">
+                    <button onclick="sendAIMessage()" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> 发送
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI工具页面 -->
+    <div class="container page" id="aiToolsPage">
+        <div class="ai-assistant-container">
+            <div class="ai-header">
+                <h1><i class="fas fa-tools"></i> AI分析工具</h1>
+                <p>专业分析工具集，为学生问题提供深度分析和定制化解决方案</p>
+            </div>
+            
+            <div class="ai-tools-container">
+                <div class="ai-tool-card">
+                    <div class="ai-tool-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>通用问题分析</h3>
+                    <p>分析学生综合问题，提供全方位解决方案和个性化建议</p>
+                    <button class="btn btn-primary" onclick="showAITab('general')">
+                        开始分析
+                    </button>
+                </div>
+                
+                <div class="ai-tool-card">
+                    <div class="ai-tool-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>学科问题分析</h3>
+                    <p>针对具体学科问题，提供专业学习建议和知识点解析</p>
+                    <button class="btn btn-success" onclick="showAITab('subject')">
+                        开始分析
+                    </button>
+                </div>
+                
+                <div class="ai-tool-card">
+                    <div class="ai-tool-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3>学习计划生成</h3>
+                    <p>根据学生情况，制定个性化学习计划和时间安排</p>
+                    <button class="btn btn-warning" onclick="showAITab('plan')">
+                        开始生成
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI分析面板 -->
+        <div class="content">
+            <div class="content-header">
+                <h2 class="content-title">专业分析工具</h2>
+                <div class="status-indicator" id="serviceStatus">
+                    <span class="status-dot"></span>
+                    <span>AI服务状态检测中...</span>
+                </div>
+            </div>
+            
+            <div class="api-tabs">
+                <div class="tab active" data-tab="general"><i class="fas fa-brain"></i> 通用问题分析</div>
+                <div class="tab" data-tab="subject"><i class="fas fa-book"></i> 学科问题分析</div>
+                <div class="tab" data-tab="plan"><i class="fas fa-tasks"></i> 学习计划生成</div>
+            </div>
+            
+            <!-- 通用问题分析 -->
+            <div class="tab-content active" id="generalTab">
+                <div class="form-group">
+                    <label class="form-label" for="studentContext"><i class="fas fa-user-graduate"></i> 学生背景信息（可选）</label>
+                    <input type="text" class="form-control" id="studentContext" placeholder="例如：五年级学生，数学基础较弱，性格内向...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="generalPrompt"><i class="fas fa-question-circle"></i> 分析内容</label>
+                    <textarea class="form-control" id="generalPrompt" placeholder="请详细描述要分析的学生问题或反馈内容..." rows="5"></textarea>
+                </div>
+                <button class="btn btn-primary" id="analyzeGeneralBtn">
+                    <i class="fas fa-brain"></i> 开始智能分析
+                </button>
+            </div>
+            
+            <!-- 学科问题分析 -->
+            <div class="tab-content" id="subjectTab">
+                <div class="form-group">
+                    <label class="form-label" for="subjectSelect"><i class="fas fa-book"></i> 学科</label>
+                    <select class="form-control" id="subjectSelect">
+                        <option value="">请选择学科</option>
+                        <option value="数学">数学</option>
+                        <option value="语文">语文</option>
+                        <option value="英语">英语</option>
+                        <option value="物理">物理</option>
+                        <option value="化学">化学</option>
+                        <option value="生物">生物</option>
+                        <option value="历史">历史</option>
+                        <option value="地理">地理</option>
+                        <option value="政治">政治</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="studentGrade"><i class="fas fa-graduation-cap"></i> 年级（可选）</label>
+                    <input type="text" class="form-control" id="studentGrade" placeholder="例如：五年级">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="subjectProblem"><i class="fas fa-edit"></i> 具体问题描述</label>
+                    <textarea class="form-control" id="subjectProblem" placeholder="请详细描述学生在学习中遇到的具体问题、不理解的知识点或学习困难..." rows="5"></textarea>
+                </div>
+                <button class="btn btn-success" id="analyzeSubjectBtn">
+                    <i class="fas fa-book"></i> 学科问题分析
+                </button>
+            </div>
+            
+            <!-- 学习计划生成 -->
+            <div class="tab-content" id="planTab">
+                <div class="form-group">
+                    <label class="form-label" for="planSubject"><i class="fas fa-book"></i> 学科</label>
+                    <select class="form-control" id="planSubject">
+                        <option value="">请选择学科</option>
+                        <option value="数学">数学</option>
+                        <option value="语文">语文</option>
+                        <option value="英语">英语</option>
+                        <option value="物理">物理</option>
+                        <option value="化学">化学</option>
+                        <option value="生物">生物</option>
+                        <option value="历史">历史</option>
+                        <option value="地理">地理</option>
+                        <option value="政治">政治</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="planGrade"><i class="fas fa-graduation-cap"></i> 年级（可选）</label>
+                    <input type="text" class="form-control" id="planGrade" placeholder="例如：五年级">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="weaknesses"><i class="fas fa-exclamation-triangle"></i> 学生的薄弱环节</label>
+                    <textarea class="form-control" id="weaknesses" placeholder="请详细描述学生在哪些方面比较薄弱，具体的学习困难..." rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="goals"><i class="fas fa-bullseye"></i> 学习目标（可选）</label>
+                    <input type="text" class="form-control" id="goals" placeholder="例如：提高数学成绩，掌握基础知识，培养学习兴趣...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="timeframe"><i class="fas fa-clock"></i> 时间安排（可选）</label>
+                    <input type="text" class="form-control" id="timeframe" placeholder="例如：一个月，一个学期，寒假期间...">
+                </div>
+                <button class="btn btn-warning" id="generatePlanBtn">
+                    <i class="fas fa-tasks"></i> 生成个性化学习计划
+                </button>
+            </div>
+            
+            <!-- 加载状态 -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="font-size: 1.1rem; color: var(--dark-color); margin-top: 1rem;">AI正在分析中，请稍候...</p>
+                <p style="color: var(--text-light); margin-top: 0.5rem;">这可能需要几秒钟时间</p>
+            </div>
+            
+            <!-- 错误提示 -->
+            <div class="error" id="errorMessage"></div>
+            
+            <!-- 响应结果 -->
+            <div class="response-container" id="responseContainer">
+                <div class="response-header">
+                    <h3 style="display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-lightbulb"></i> AI分析结果</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn" id="copyBtn" style="background: rgba(255,255,255,0.2); padding: 0.6rem 1.2rem;">
+                            <i class="fas fa-copy"></i> 复制结果
+                        </button>
+                        <button class="btn" id="saveBtn" style="background: rgba(255,255,255,0.2); padding: 0.6rem 1.2rem;">
+                            <i class="fas fa-download"></i> 保存
+                        </button>
+                    </div>
+                </div>
+                <div class="response-content" id="responseContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 黄骅市智源成长AI-返家乡志愿辅导工具包. 保留所有权利.</p>
+                <div>
+                    <span>AI服务状态: <span id="footerStatus">检测中...</span></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 后端API基础URL
+        const API_BASE_URL = 'http://localhost:3000';
+        
+        // 页面切换功能
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active-nav');
+            });
+            
+            if (pageId === 'homePage') {
+                document.getElementById('navHome').classList.add('active-nav');
+            } else if (pageId === 'aiChatPage') {
+                document.getElementById('navAIChat').classList.add('active-nav');
+            } else if (pageId === 'aiToolsPage') {
+                document.getElementById('navAITools').classList.add('active-nav');
+            }
+            
+            setTimeout(() => {
+                document.getElementById(pageId).classList.add('active');
+            }, 50);
+        }
+
+        // 导航事件
+        document.getElementById('navHome').addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('homePage');
+        });
+        
+        document.getElementById('navAIChat').addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('aiChatPage');
+        });
+        
+        document.getElementById('navAITools').addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('aiToolsPage');
+        });
+        
+        document.getElementById('heroAIBtn').addEventListener('click', () => {
+            showPage('aiChatPage');
+        });
+        
+        document.getElementById('contentAIBtn').addEventListener('click', () => {
+            showPage('aiChatPage');
+        });
+
+        // AI聊天功能
+        const aiChatMessages = document.getElementById('aiChatMessages');
+        const aiUserInput = document.getElementById('aiUserInput');
+        const aiTypingIndicator = document.getElementById('aiTypingIndicator');
+
+        function sendAIMessage() {
+            const message = aiUserInput.value.trim();
+            if (!message) return;
+
+            addAIMessage(message, 'user');
+            aiUserInput.value = '';
+
+            aiTypingIndicator.style.display = 'block';
+            aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+
+            // 调用真实AI服务
+            callAIChatAPI(message);
+        }
+
+        function addAIMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `ai-message ai-${sender}-message`;
+            messageDiv.textContent = text;
+            aiChatMessages.appendChild(messageDiv);
+            aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+        }
+
+        async function callAIChatAPI(message) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/analyze`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: message,
+                        context: '智能对话'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`请求失败: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                aiTypingIndicator.style.display = 'none';
+                
+                if (data.success) {
+                    addAIMessage(data.analysis, 'bot');
+                } else {
+                    addAIMessage('抱歉，AI服务暂时不可用，请稍后重试。', 'bot');
+                }
+            } catch (error) {
+                console.error('AI聊天错误:', error);
+                aiTypingIndicator.style.display = 'none';
+                addAIMessage('网络连接出现问题，请检查网络连接后重试。', 'bot');
+            }
+        }
+
+        // 支持回车键发送
+        aiUserInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendAIMessage();
+            }
+        });
+
+        // AI分析功能
+        // 选项卡切换
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(tabName + 'Tab').classList.add('active');
+                
+                hideResponse();
+            });
+        });
+
+        function showAITab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // 显示加载状态
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            hideResponse();
+            hideError();
+        }
+        
+        // 隐藏加载状态
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+        
+        // 显示响应结果
+        function showResponse(content) {
+            document.getElementById('responseContent').textContent = content;
+            document.getElementById('responseContainer').style.display = 'block';
+            document.getElementById('responseContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 隐藏响应结果
+        function hideResponse() {
+            document.getElementById('responseContainer').style.display = 'none';
+        }
+        
+        // 显示错误信息
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorMessage').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 隐藏错误信息
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // 通用分析按钮
+        document.getElementById('analyzeGeneralBtn').addEventListener('click', function() {
+            const prompt = document.getElementById('generalPrompt').value;
+            const context = document.getElementById('studentContext').value;
+            
+            if (!prompt.trim()) {
+                showError('请输入要分析的内容');
+                return;
+            }
+            
+            performAIAnalysis(prompt, context);
+        });
+        
+        // 学科问题分析按钮
+        document.getElementById('analyzeSubjectBtn').addEventListener('click', function() {
+            const subject = document.getElementById('subjectSelect').value;
+            const problem = document.getElementById('subjectProblem').value;
+            const grade = document.getElementById('studentGrade').value;
+            
+            if (!subject) {
+                showError('请选择学科');
+                return;
+            }
+            
+            if (!problem.trim()) {
+                showError('请输入具体问题描述');
+                return;
+            }
+            
+            performSubjectAnalysis(subject, problem, grade);
+        });
+        
+        // 学习计划生成按钮
+        document.getElementById('generatePlanBtn').addEventListener('click', function() {
+            const subject = document.getElementById('planSubject').value;
+            const weaknesses = document.getElementById('weaknesses').value;
+            const grade = document.getElementById('planGrade').value;
+            const goals = document.getElementById('goals').value;
+            const timeframe = document.getElementById('timeframe').value;
+            
+            if (!subject) {
+                showError('请选择学科');
+                return;
+            }
+            
+            if (!weaknesses.trim()) {
+                showError('请输入学生的薄弱环节');
+                return;
+            }
+            
+            generateLearningPlan(subject, weaknesses, grade, goals, timeframe);
+        });
+        
+        // 复制结果按钮
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const responseContent = document.getElementById('responseContent').textContent;
+            navigator.clipboard.writeText(responseContent).then(() => {
+                alert('分析结果已复制到剪贴板');
+            }).catch(err => {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动选择文本复制');
+            });
+        });
+
+        // 保存结果按钮
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            const responseContent = document.getElementById('responseContent').textContent;
+            const blob = new Blob([responseContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `AI分析结果_${new Date().toLocaleDateString()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // 执行通用AI分析
+        async function performAIAnalysis(prompt, context = null) {
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/analyze`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        context: context
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`请求失败: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResponse(data.analysis);
+                } else {
+                    throw new Error(data.error || '分析失败');
+                }
+            } catch (error) {
+                console.error('AI分析错误:', error);
+                showError(`分析失败: ${error.message}\n\n请检查网络连接或稍后重试。`);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 执行学科问题分析
+        async function performSubjectAnalysis(subject, problem, grade = null) {
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/analyze/subject`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subject: subject,
+                        problem: problem,
+                        grade: grade
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`请求失败: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResponse(data.analysis);
+                } else {
+                    throw new Error(data.error || '分析失败');
+                }
+            } catch (error) {
+                console.error('学科分析错误:', error);
+                showError(`分析失败: ${error.message}\n\n请检查网络连接或稍后重试。`);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 生成学习计划
+        async function generateLearningPlan(subject, weaknesses, grade = null, goals = null, timeframe = null) {
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/learning-plan`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subject: subject,
+                        weaknesses: weaknesses,
+                        grade: grade,
+                        goals: goals,
+                        timeframe: timeframe
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`请求失败: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResponse(data.plan);
+                } else {
+                    throw new Error(data.error || '学习计划生成失败');
+                }
+            } catch (error) {
+                console.error('学习计划生成错误:', error);
+                showError(`生成失败: ${error.message}\n\n请检查网络连接或稍后重试。`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // 检查服务状态
+        async function checkServiceStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/config`);
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatus('online', `AI服务在线 (${data.ai_service})`);
+                } else {
+                    throw new Error('服务异常');
+                }
+            } catch (error) {
+                updateStatus('offline', 'AI服务离线');
+            }
+        }
+
+        function updateStatus(status, message) {
+            const statusElements = [
+                document.getElementById('apiStatus'),
+                document.getElementById('serviceStatus'),
+                document.getElementById('footerStatus')
+            ];
+            
+            statusElements.forEach(element => {
+                if (element) {
+                    const dot = element.querySelector('.status-dot');
+                    if (dot) {
+                        dot.className = `status-dot ${status}`;
+                    }
+                    const text = element.querySelector('span:last-child') || element;
+                    if (text.textContent !== undefined) {
+                        text.textContent = message;
+                    }
+                    element.className = `status-indicator status-${status}`;
+                }
+            });
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 隐藏加载动画
+            setTimeout(() => {
+                document.getElementById('pageLoader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('pageLoader').style.display = 'none';
+                }, 500);
+            }, 1500);
+            
+            // 默认显示首页
+            showPage('homePage');
+            
+            // 自动聚焦AI输入框
+            aiUserInput.focus();
+            
+            // 检查服务状态
+            checkServiceStatus();
+            setInterval(checkServiceStatus, 30000); // 每30秒检查一次
+        });
+    </script>
+</body>
+</html>
