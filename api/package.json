@@ -4,7 +4,8 @@
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
-    "zhipuai": "^1.0.7", // 智谱AI SDK
-    "openai": "^4.24.1"  // OpenAI SDK（可选，不用可删除）
+    "zhipuai": "^1.0.7", 
+    "openai": "^4.24.1"  
   }
+
 }
